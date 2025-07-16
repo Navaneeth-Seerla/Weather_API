@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather App</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #74ebd5, #acb6e5);
+        color: #333;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      header {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: #fff;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+      }
+      .weather-box {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 12px;
+        padding: 30px;
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      }
+      .input-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
+      input {
+        padding: 14px;
+        width: 70%;
+        font-size: 1.2rem;
+        border-radius: 8px;
+        border: 2px solid #1e90ff;
+        outline: none;
+        transition: 0.3s ease;
+      }
+      input:focus {
+        border-color: #104e8b;
+        box-shadow: 0 0 10px rgba(30, 144, 255, 0.4);
+      }
+      button {
+        padding: 14px 18px;
+        margin-left: 10px;
+        border: none;
+        border-radius: 8px;
+        background: #1e90ff;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      button:hover {
+        background: #104e8b;
+      }
+      .result {
+        margin-top: 20px;
+        font-size: 1.2rem;
+        color: #333;
+      }
+      img {
+        width: 80px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>Weather App</header>
+
+    <div class="weather-box">
+      <div class="input-container">
+        <input type="text" id="location" placeholder="Enter city name" />
+        <button onclick="getWeather()">Get Weather</button>
+      </div>
+      <div class="result" id="result"></div>
+    </div>
+
+    <script>
+      async function getWeather() {
+        const location = document.getElementById("location").value;
+        const resultDiv = document.getElementById("result");
+
+        if (location.trim() === "") {
+          resultDiv.innerHTML = "<p>Please enter a city name.</p>";
+          return;
+        }
+
+        const apiKey = "e691aac292d3427c98d174106251607";
+        const url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}&aqi=yes`;
+
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error("City not found");
+          }
+
+          const data = await response.json();
+          const city = data.location.name;
+          const country = data.location.country;
+          const temp = data.current.temp_c;
+          const condition = data.current.condition.text;
+          const icon = data.current.condition.icon;
+
+          resultDiv.innerHTML = `
+                    <h2>${city}, ${country}</h2>
+                    <img src="https:${icon}" alt="${condition}">
+                    <p>Temperature: <strong>${temp}°C</strong></p>
+                    <p>Condition: ${condition}</p>
+                `;
+        } catch (error) {
+          resultDiv.innerHTML = "<p>City not found. Please try again.</p>";
+        }
+      }
+    </script>
+  </body>
+</html>
